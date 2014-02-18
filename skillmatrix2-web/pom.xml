@@ -125,34 +125,6 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>com.oracle.adf.library</groupId>
-            <artifactId>Contexts-and-Dependency-Injection</artifactId>
-            <version>12.1.2-0-0</version>
-            <type>pom</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle.adf.library</groupId>
-            <artifactId>JSP-Runtime</artifactId>
-            <version>12.1.2-0-0</version>
-            <type>pom</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle.adf.library</groupId>
-            <artifactId>JSF</artifactId>
-            <version>12.1.2-0-0</version>
-            <type>pom</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle.adf.library</groupId>
-            <artifactId>JSTL</artifactId>
-            <version>12.1.2-0-0</version>
-            <type>pom</type>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
     <repositories>

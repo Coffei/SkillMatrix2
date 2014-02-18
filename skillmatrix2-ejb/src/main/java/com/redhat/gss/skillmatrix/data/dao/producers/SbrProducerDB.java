@@ -3,8 +3,9 @@ package com.redhat.gss.skillmatrix.data.dao.producers;
 import com.redhat.gss.skillmatrix.data.dao.exceptions.MemberInvalidException;
 import com.redhat.gss.skillmatrix.data.dao.producers.interfaces.SbrProducer;
 import com.redhat.gss.skillmatrix.model.Member;
-import com.redhat.gss.skillmatrix.model.SBR;
-import com.redhat.gss.skillmatrix.model.SBR_;
+import com.redhat.gss.skillmatrix.model.*;
+
+
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;

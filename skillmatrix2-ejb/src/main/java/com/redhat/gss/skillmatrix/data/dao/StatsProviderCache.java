@@ -7,7 +7,6 @@ import com.redhat.gss.skillmatrix.model.Member;
 import com.redhat.gss.skillmatrix.model.SBR;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -78,9 +77,9 @@ public class StatsProviderCache implements StatsProvider {
     @PostConstruct
     private void init() {
         log.log(Level.INFO, "StatsProvider cache instantiated");
-        sbrKnowScoreCache = new HashMap<>(); // create all maps- caches
-        memberKnowScoreCache = new HashMap<>();
-        memberSbrKnowScoreCache = new HashMap<>();
+        sbrKnowScoreCache = new HashMap<SBR, Long>(); // create all maps- caches
+        memberKnowScoreCache = new HashMap<Member, Long>();
+        memberSbrKnowScoreCache = new HashMap<Membership, Long>();
     }
     
     private final class Membership {
@@ -113,9 +112,9 @@ public class StatsProviderCache implements StatsProvider {
 
         @Override
         public int hashCode() {
-            int hash = 3;
-            hash = 89 * hash + Objects.hashCode(this.member);
-            hash = 89 * hash + Objects.hashCode(this.sbr);
+            int hash = 5;
+            hash = 67 * hash + (this.member != null ? this.member.hashCode() : 0);
+            hash = 67 * hash + (this.sbr != null ? this.sbr.hashCode() : 0);
             return hash;
         }
 
@@ -128,14 +127,16 @@ public class StatsProviderCache implements StatsProvider {
                 return false;
             }
             final Membership other = (Membership) obj;
-            if (!Objects.equals(this.member, other.member)) {
+            if (this.member != other.member && (this.member == null || !this.member.equals(other.member))) {
                 return false;
             }
-            if (!Objects.equals(this.sbr, other.sbr)) {
+            if (this.sbr != other.sbr && (this.sbr == null || !this.sbr.equals(other.sbr))) {
                 return false;
             }
             return true;
         }
+
+        
         
         
         

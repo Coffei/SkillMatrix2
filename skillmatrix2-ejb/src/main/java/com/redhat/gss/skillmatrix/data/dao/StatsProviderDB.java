@@ -123,7 +123,7 @@ public class StatsProviderDB implements StatsProvider {
     private SBR checkAndReloadSbr(SBR sbr) throws SbrInvalidException {
         try {
             sbr.getPackages().size();
-        } catch (LazyInitializationException | NullPointerException e) { 
+        } catch (LazyInitializationException e) { 
             // need to reload SBR
             if(sbr.getId()==null)
                 throw new SbrInvalidException("missing packages and id", sbr);
@@ -131,6 +131,16 @@ public class StatsProviderDB implements StatsProvider {
             sbr = em.find(SBR.class, sbr.getId());
             if(sbr==null)
                 throw new SbrInvalidException("invalid sbr.id", sbr);
+        } catch (NullPointerException e) {
+            // need to reload SBR
+            if (sbr.getId() == null) {
+                throw new SbrInvalidException("missing packages and id", sbr);
+            }
+
+            sbr = em.find(SBR.class, sbr.getId());
+            if (sbr == null) {
+                throw new SbrInvalidException("invalid sbr.id", sbr);
+            }
         }
         
         return sbr;
