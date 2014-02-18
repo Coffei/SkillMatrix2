@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:my="http://java.sun.com/jsf/composite/composites"
+                template="/WEB-INF/templates/default.xhtml"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:rich="http://richfaces.org/rich"
+                xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <ui:define name="title">Matrix of skills</ui:define>
+    <ui:define name="scripts">
+        <script type="text/javascript">
+            window.onload = function() {
+                loadPage();
+            };
+            var initTooltip = function() {
+                jQuery('.matrixtooltip').popover({html:true, delay: {show: 500, hide: 100}, trigger: 'hover'}); 
+            };
+        </script>
+    </ui:define>
+    <ui:define name="content">
+        <h:form>    
+            <a4j:jsFunction name="loadPage" action="#{matrix.togglePage()}" render="content" oncomplete="initTooltip();" />
+            <a4j:outputPanel id="content">
+                <a4j:outputPanel rendered="#{matrix.page eq null}">
+                    <h2 style="margin-top: 200px; text-align: center;">Page is loading..</h2>
+                    <div style="text-align:center; margin-top: 50px;">
+                        <h:graphicImage library="gfx" name="catload.gif"/>
+                    </div>
+                        
+                </a4j:outputPanel>
+                <ui:include src="#{matrix.page}"/>            
+            </a4j:outputPanel>
+                
+                
+                
+        </h:form>
+    </ui:define>
+</ui:composition>
+    
+    

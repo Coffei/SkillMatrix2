@@ -1,0 +1,44 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:my="http://java.sun.com/jsf/composite/composites"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:rich="http://richfaces.org/rich"
+                xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <small>
+        <rich:dataTable value="#{matrix.modelHelper.model}" var="member" styleClass="table table-hover table-striped">
+            
+            <rich:column styleClass="namecell">
+                <f:facet name="header">
+                    <h:inputText value="#{matrix.modelHelper.nameFilter}" styleClass="form-control"
+                                 style="width: auto; margin: 5px 5px;">
+                        <a4j:ajax event="keyup" render="@body @footer" execute="@this" oncomplete="initTooltip();"/>
+                    </h:inputText>
+                </f:facet>
+                <strong>
+                    <h:link outcome="member" value="#{member.name}" styleClass="headerlink">
+                        <f:param name="id" value="#{member.id}"/>
+                    </h:link>
+                </strong>
+            </rich:column>
+            
+            <c:forEach items="#{dao.allSbrs}" var="sbr" varStatus="status">
+                <rich:column styleClass="matrixcell" headerClass="matrixheader">
+                    <f:facet name="header" >
+                        <h:link outcome="sbr" value="#{sbr.name}" styleClass="headerlink">
+                            <f:param name="id" value="#{sbr.id}"/>
+                        </h:link>    
+                    </f:facet>
+                    <span class="matrixtooltip" data-toggle="popover" data-placement="#{status.last ? 'left' : 'right'}" data-container="body" data-content="#{matrix.getTooltipText(member, sbr)}"> 
+                        <h:outputText value=" " styleClass="icon-thumbs-up pull-left" rendered="#{matrix.isMember(member, sbr)}"/>
+                        <h:outputText value="#{matrix.getCellText(member, sbr)}" escape="false"/>                    
+                    </span>
+                </rich:column>
+            </c:forEach>
+            
+            
+        </rich:dataTable>
+    </small>
+</ui:composition>

@@ -35,6 +35,23 @@ body {
     }
 }
 
+/* Matrix styles */
+.namecell {
+    border-right: 2px solid #dddddd;
+}
+
+.matrixheader {
+    text-align: center;
+}
+
+.matrixcell {
+    text-align: center; border-right: 1px solid #dddddd;
+}
+
+table.popovertable td:nth-child(1) {
+    font-weight:bold;
+}
+
 
 /* picklist bootstrap integration */
 div.rf-pick  button { /* emulate .btn .btn-default */
@@ -151,6 +168,6 @@ div.rf-pick-lst-dcrtn {
 
 /* Workarounds */
 
-.rf-dt-hdr-c, .rf-dt-shdr-c {
+.rf-dt-hdr-c :not(.matrixheader), .rf-dt-shdr-c  :not(.matrixheader){
     text-align: left !important;
 }
