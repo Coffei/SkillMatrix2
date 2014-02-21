@@ -13,7 +13,10 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import javax.transaction.*;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 
 /**
  * Database implementation of {@link MemberProducer}.
@@ -243,7 +246,11 @@ public class MemberProducerDB implements MemberProducer {
 
                 List ids = idquery.getResultList();
 
-                return root.get(Member_.id).in(ids);
+                if (ids==null || ids.isEmpty()) {
+                    return cb.or(); // evaluates to false, since no members with such attributes exist
+                } else {
+                    return root.get(Member_.id).in(ids);
+                }
             }
         });
 
@@ -290,11 +297,14 @@ public class MemberProducerDB implements MemberProducer {
                 Root<PackageKnowledge> pkgKnow = knowSubquery.from(PackageKnowledge.class);
 
 
-                Subquery<Package> pkgSubquery = query.subquery(Package.class);
+                CriteriaQuery<Package> pkgSubquery = cb.createQuery(Package.class);
                 Root<Package> pkg = pkgSubquery.from(Package.class);
 
                 //select all packages in the specified sbr
                 pkgSubquery.select(pkg).where(cb.equal(pkg.get(Package_.sbr), sbr));
+                
+                //evaluate pkg query
+                List<Package> pkgs = em.createQuery(pkgSubquery).getResultList();
 
 
                 //select to get persons' KnowScore of certain SBR. KnowScore is actually 2^level, but there is no power
@@ -313,9 +323,17 @@ public class MemberProducerDB implements MemberProducer {
                                                         pkgKnow.get(PackageKnowledge_.level).as(Double.class),
                                                         0.5)),
                                         1)).as(Integer.class))
-                        .where(cb.equal(pkgKnow.get(PackageKnowledge_.member), root), pkgKnow.get(PackageKnowledge_.pkg).in(pkgSubquery));
+                        .where(cb.equal(pkgKnow.get(PackageKnowledge_.member), root), pkgKnow.get(PackageKnowledge_.pkg).in(pkgs));
 
-                return operatorEnum.createPredicate(cb, knowSubquery, cb.literal(score));
+                if (!pkgs.isEmpty()) {
+                    return operatorEnum.createPredicate(cb, knowSubquery, cb.literal(score));
+                } else {
+                    if(operatorEnum.compare(0, score)) {
+                        return cb.and(); // score is bigger/smaller than 0 (knowscore), return true
+                    } else {
+                        return cb.or(); // score is not bigger/smaller than 0 (knowscore), return false
+                    }
+                }
 
             }
         });
@@ -737,5 +755,29 @@ public class MemberProducerDB implements MemberProducer {
 
     private static interface Ordering {
         public javax.persistence.criteria.Order apply(CriteriaBuilder cb, Root<Member> root,  CriteriaQuery query);
+    }
+
+    public void persist(Object object) {
+        /* Add this to the deployment descriptor of this module (e.g. web.xml, ejb-jar.xml):
+         * <persistence-context-ref>
+         * <persistence-context-ref-name>persistence/LogicalName</persistence-context-ref-name>
+         * <persistence-unit-name>SkillMatrix2DS</persistence-unit-name>
+         * </persistence-context-ref>
+         * <resource-ref>
+         * <res-ref-name>UserTransaction</res-ref-name>
+         * <res-type>javax.transaction.UserTransaction</res-type>
+         * <res-auth>Container</res-auth>
+         * </resource-ref> */
+        try {
+            Context ctx = new InitialContext();
+            UserTransaction utx = (UserTransaction) ctx.lookup("java:comp/env/UserTransaction");
+            utx.begin();
+            em.joinTransaction();
+            em.persist(object);
+            utx.commit();
+        } catch (Exception e) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", e);
+            throw new RuntimeException(e);
+        }
     }
 }

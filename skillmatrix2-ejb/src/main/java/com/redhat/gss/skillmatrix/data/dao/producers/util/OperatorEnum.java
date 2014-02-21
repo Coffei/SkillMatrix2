@@ -97,4 +97,24 @@ public enum OperatorEnum {
 
         return null;
     }
+    
+    public <T extends Comparable<T>> boolean compare(T a, T b) {
+        switch(this) {
+            case BIGGER:
+                return a.compareTo(b) > 0;
+            case BIGGER_OR_EQUAL:
+                return a.compareTo(b) >= 0;
+            case EQUAL:
+                return a.compareTo(b) == 0;
+            case SMALLER:
+                return a.compareTo(b) < 0;
+            case SMALLER_OR_EQUAL:
+                return a.compareTo(b) <= 0;
+            default:
+                assert(false); // should never happen
+                
+        }
+        
+        return false;
+    }
 }

@@ -109,6 +109,10 @@ public class StatsProviderDB implements StatsProvider {
                 .where(cb.equal(pkgKnow.get(PackageKnowledge_.member), member), 
                         pkgKnow.get(PackageKnowledge_.pkg).in(sbr.getPackages()));
 
+        if(sbr.getPackages().isEmpty()) {
+            return 0; // if SBR has no pkgs, then KnowScore must be zero
+        }
+        
         List<Float> results = em.createQuery(query).getResultList();
         if(!results.isEmpty()) {
          Float result = results.get(0);

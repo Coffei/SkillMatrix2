@@ -143,7 +143,11 @@ public class PackageProducerDB implements PackageProducer {
                 List<Package> pkgs = em.createQuery(pkgCriteria).getResultList();
 
                 //create predicate
-                return root.in(pkgs);
+                if (!pkgs.isEmpty()) {
+                    return root.in(pkgs);
+                } else {
+                    return cb.or();
+                }
             }
         });
 
@@ -169,7 +173,11 @@ public class PackageProducerDB implements PackageProducer {
 
                 //add criteria
 
-                return root.get(Package_.sbr).in(sbrs);
+                if (!sbrs.isEmpty()) {
+                    return root.get(Package_.sbr).in(sbrs);
+                } else {
+                    return cb.or();
+                }
             }
         });
 
